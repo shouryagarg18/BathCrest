@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Layers, Plus, Trash2, ArrowLeft, AlertCircle, Edit, Link as LinkIcon, Check, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://maintaining-nearby-students-trusts.trycloudflare.com/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://measure-worship-fiber-mean.trycloudflare.com/api';
 
 export default function AdminCategoriesPage() {
   const router = useRouter();

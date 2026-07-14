@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { BarChart2, DollarSign, Users, Package, ShoppingCart, ArrowLeft, TrendingUp, AlertTriangle } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://maintaining-nearby-students-trusts.trycloudflare.com/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://measure-worship-fiber-mean.trycloudflare.com/api';
 
 export default function AdminAnalyticsPage() {
   const router = useRouter();

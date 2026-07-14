@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { CreditCard, Truck, MapPin, Check, ChevronRight, Shield } from 'lucide-react';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://maintaining-nearby-students-trusts.trycloudflare.com/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://measure-worship-fiber-mean.trycloudflare.com/api';
 const SHIPPING_THRESHOLD = 1999;
 const SHIPPING_COST = 299;
 const TAX_RATE = 0.18;
