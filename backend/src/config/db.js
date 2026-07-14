@@ -24,29 +24,10 @@ const connectDB = async () => {
       }, 500);
       return;
     } catch (localErr) {
-      console.log(`⚠️  Local MongoDB not available (${localErr.message})`);
-      console.log('🔄 Falling back to in-memory MongoDB...');
+      console.error(`❌ MongoDB connection error: ${localErr.message}`);
+      console.error('⚠️ Did you forget to allow 0.0.0.0/0 in MongoDB Atlas Network Access?');
+      process.exit(1);
     }
-
-    // Fallback to in-memory MongoDB for development
-    const { MongoMemoryServer } = require('mongodb-memory-server');
-    const mongod = await MongoMemoryServer.create({ instance: { dbName: 'bathcrest' } });
-    const memUri = mongod.getUri();
-    const conn = await mongoose.connect(memUri);
-    console.log(`✅ In-Memory MongoDB Connected: ${conn.connection.host}`);
-    console.log('📌 Note: Data will not persist between server restarts');
-    console.log('💡 Install MongoDB for persistence: https://www.mongodb.com/try/download/community');
-
-    // Auto-seed the in-memory database
-    setTimeout(async () => {
-      try {
-        console.log('🌱 Seeding in-memory database...');
-        const { seedDatabase } = require('../utils/seed');
-        await seedDatabase();
-      } catch (e) {
-        console.error('⚠️ Seed error:', e.message);
-      }
-    }, 500);
 
   } catch (error) {
     console.error(`❌ MongoDB connection error: ${error.message}`);
