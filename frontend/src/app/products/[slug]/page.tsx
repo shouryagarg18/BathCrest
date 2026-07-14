@@ -7,7 +7,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { Star, Heart, ShoppingCart, Package, Shield, Truck, RotateCcw, ChevronRight, Plus, Minus, Check } from 'lucide-react';
 import type { Product } from '@/types';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://measure-worship-fiber-mean.trycloudflare.com/api';
+const API_URL = 'https://measure-worship-fiber-mean.trycloudflare.com/api';
 
 function StarRating({ rating, size = 16 }: { rating: number; size?: number }) {
   return (

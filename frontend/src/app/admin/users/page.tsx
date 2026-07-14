@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Users, Mail, Clock, Shield, User, ArrowLeft, Search } from 'lucide-react';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://measure-worship-fiber-mean.trycloudflare.com/api';
+const API_URL = 'https://measure-worship-fiber-mean.trycloudflare.com/api';
 
 export default function AdminUsersPage() {
   const router = useRouter();

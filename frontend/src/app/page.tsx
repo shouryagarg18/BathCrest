@@ -324,7 +324,7 @@ function FeaturedProducts() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://measure-worship-fiber-mean.trycloudflare.com/api'}/products/featured`)
+    fetch(`${'https://measure-worship-fiber-mean.trycloudflare.com/api'}/products/featured`)
       .then(r => r.json())
       .then(d => { if (d.success) setProducts(d.products.slice(0, 8)); })
       .catch(() => {})
@@ -418,7 +418,7 @@ function BestSellers() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://measure-worship-fiber-mean.trycloudflare.com/api'}/products/bestsellers`)
+    fetch(`${'https://measure-worship-fiber-mean.trycloudflare.com/api'}/products/bestsellers`)
       .then(r => r.json())
       .then(d => { if (d.success) setProducts(d.products.slice(0, 4)); })
       .catch(() => {})

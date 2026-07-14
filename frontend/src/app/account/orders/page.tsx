@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Package, ChevronRight, Clock, Truck, CheckCircle, XCircle } from 'lucide-react';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://measure-worship-fiber-mean.trycloudflare.com/api';
+const API_URL = 'https://measure-worship-fiber-mean.trycloudflare.com/api';
 
 interface Order {
   _id: string;

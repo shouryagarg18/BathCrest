@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Tag, Plus, Trash2, ArrowLeft, Percent, IndianRupee, Clock, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://measure-worship-fiber-mean.trycloudflare.com/api';
+const API_URL = 'https://measure-worship-fiber-mean.trycloudflare.com/api';
 
 export default function AdminCouponsPage() {
   const router = useRouter();

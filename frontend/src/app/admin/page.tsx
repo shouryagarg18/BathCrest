@@ -8,7 +8,7 @@ import {
   Plus, Settings, BarChart2, Tag, LogOut
 } from 'lucide-react';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://measure-worship-fiber-mean.trycloudflare.com/api';
+const API_URL = 'https://measure-worship-fiber-mean.trycloudflare.com/api';
 
 interface Stats {
   totalRevenue?: number;

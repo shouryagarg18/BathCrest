@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import type { Product } from '@/types';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://measure-worship-fiber-mean.trycloudflare.com/api';
+const API_URL = 'https://measure-worship-fiber-mean.trycloudflare.com/api';
 
 const SORT_OPTIONS = [
   { value: 'newest', label: 'Newest First' },
