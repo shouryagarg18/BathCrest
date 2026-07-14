@@ -21,8 +21,17 @@ export default function ContactPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate form submission
+    
+    // Construct WhatsApp message
+    const waNumber = "917838382868";
+    const waText = `*New Website Enquiry*\n\n*Name:* ${form.name}\n*Email:* ${form.email}\n*Phone:* ${form.phone || 'N/A'}\n*Subject:* ${form.subject}\n\n*Message:*\n${form.message}`;
+    const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(waText)}`;
+    
+    // Open WhatsApp in new tab
+    window.open(waUrl, '_blank');
+    
     setSubmitted(true);
+    setForm({ name: '', email: '', phone: '', subject: '', message: '' });
   };
 
   return (
