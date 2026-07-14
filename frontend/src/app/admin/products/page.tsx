@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Package, Search, Plus, ArrowLeft, Edit2, Trash2, ChevronLeft, ChevronRight, CheckCircle, AlertCircle } from 'lucide-react';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://maintaining-nearby-students-trusts.trycloudflare.com/api';
 
 function AdminProductsContent() {
   const router = useRouter();

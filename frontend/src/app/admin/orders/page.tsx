@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ShoppingCart, LogOut, ArrowLeft, Search, Eye } from 'lucide-react';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://maintaining-nearby-students-trusts.trycloudflare.com/api';
 
 const STATUS_COLORS: Record<string, string> = {
   processing: 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20',

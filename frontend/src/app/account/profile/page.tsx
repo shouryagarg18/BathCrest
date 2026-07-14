@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { User, Mail, Shield, Key, Edit2, LogOut, MapPin, X, Check, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://maintaining-nearby-students-trusts.trycloudflare.com/api';
 
 export default function ProfilePage() {
   const [user, setUser] = useState<any>(null);

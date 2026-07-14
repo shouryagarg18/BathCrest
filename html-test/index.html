@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products | BathCrest Premium</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* ── Design Tokens ───────────────────────────────────────── */
+        :root {
+            --black: #0c0a09;
+            --white: #ffffff;
+            --beige: #d4b895;
+            --accent: #8b5e34;
+            --accent-dark: #5c3a21;
+            --nav-h: 72px;
+            --ease: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ── Reset ───────────────────────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: 'Inter', 'Poppins', -apple-system, sans-serif;
+            background-color: var(--black);
+            color: var(--white);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Scrollbar ───────────────────────────────────────────── */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #0f0f0f; }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--accent), var(--beige));
+            border-radius: 3px;
+        }
+        ::-selection { background: rgba(139,94,52,0.3); color: #fff; }
+
+        /* ── Glass ───────────────────────────────────────────────── */
+        .glass {
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .glass-dark {
+            background: rgba(9,9,9,0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        /* ── Buttons ─────────────────────────────────────────────── */
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: #fff;
+            font-weight: 600;
+            font-size: 14px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all var(--ease);
+            white-space: nowrap;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(139,94,52,0.4);
+        }
+
+        /* ── Navbar ──────────────────────────────────────────────── */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--nav-h);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            z-index: 50;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .nav-logo {
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--white);
+            text-decoration: none;
+        }
+        .nav-logo span { color: var(--accent); }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+        .nav-links a {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color var(--ease);
+        }
+        .nav-links a:hover, .nav-links a.active { color: var(--white); }
+
+        .nav-actions { display: flex; gap: 20px; align-items: center; }
+        .icon-action {
+            color: rgba(255,255,255,0.6);
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: color var(--ease);
+            display: flex;
+            position: relative;
+        }
+        .icon-action:hover { color: var(--white); }
+
+        /* ── Page Layout ─────────────────────────────────────────── */
+        .main-container {
+            margin-top: var(--nav-h);
+            padding: 40px;
+            display: flex;
+            gap: 40px;
+            max-width: 1600px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
+
+        /* ── Sidebar ─────────────────────────────────────────────── */
+        .sidebar {
+            width: 260px;
+            flex-shrink: 0;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .filter-section {
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .filter-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .filter-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .filter-item:hover { color: var(--white); }
+        .filter-item input {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 4px;
+            background: transparent;
+            cursor: pointer;
+            display: grid;
+            place-content: center;
+            transition: all 0.2s;
+        }
+        .filter-item input::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            border-radius: 2px;
+        }
+        .filter-item input:checked {
+            border-color: var(--accent);
+            background: rgba(139,94,52,0.1);
+        }
+        .filter-item input:checked::before { transform: scale(1); }
+
+        /* ── Product Area ────────────────────────────────────────── */
+        .content { flex-grow: 1; }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 10px 16px;
+            border-radius: 8px;
+            width: 350px;
+            gap: 10px;
+        }
+        .search-box input {
+            background: transparent;
+            border: none;
+            color: white;
+            width: 100%;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .sort-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+        }
+        .sort-select {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            outline: none;
+            cursor: pointer;
+        }
+        .sort-select option { background: var(--black); }
+
+        /* ── Product Grid ────────────────────────────────────────── */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .card-product {
+            background: rgba(20,20,20,0.8);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all var(--ease);
+            position: relative;
+        }
+        .card-product:hover {
+            border-color: rgba(139,94,52,0.3);
+            transform: translateY(-6px);
+            box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+        }
+
+        .img-container {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            background: #111;
+        }
+        
+        .img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.7s ease;
+        }
+        
+        .card-product:hover .img-container img {
+            transform: scale(1.05);
+        }
+
+        .badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            z-index: 10;
+        }
+        .badge-discount { background: var(--accent); color: white; }
+        .badge-new { background: var(--success); color: white; }
+        .badge-bestseller { background: #f59e0b; color: white; }
+
+        .btn-wishlist {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255,255,255,0.7);
+            cursor: pointer;
+            transition: all var(--ease);
+            opacity: 0;
+            z-index: 10;
+        }
+        .card-product:hover .btn-wishlist { opacity: 1; }
+        .btn-wishlist:hover { color: var(--danger); }
+        .btn-wishlist.active { color: var(--danger); background: rgba(239, 68, 68, 0.1); opacity: 1; }
+
+        .quick-add {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 12px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        .card-product:hover .quick-add { transform: translateY(0); }
+        .quick-add .btn-primary { width: 100%; padding: 10px; font-size: 13px; }
+
+        .product-info { padding: 16px; }
+        
+        .category-name {
+            color: var(--accent);
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+        
+        .product-name {
+            color: var(--white);
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.4;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: color var(--ease);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .product-name:hover { color: var(--accent); }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+        .rating svg { color: #fbbf24; fill: #fbbf24; width: 12px; height: 12px; }
+        .rating-text { color: rgba(255,255,255,0.35); font-size: 10px; margin-left: 2px; }
+
+        .price-row {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+        .price { font-weight: 700; font-size: 16px; color: var(--white); }
+        .old-price { font-size: 12px; color: rgba(255,255,255,0.4); text-decoration: line-through; }
+        .stock-out { color: var(--danger); font-size: 12px; font-weight: 500; margin-left: auto; }
+        
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar glass-dark">
+        <a href="#" class="nav-logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent);"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Bath<span>Crest</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#" class="active">Products</a></li>
+            <li><a href="#">Categories</a></li>
+            <li><a href="#">About</a></li>
+        </ul>
+        <div class="nav-actions">
+            <button class="icon-action"><i data-lucide="search" size="20"></i></button>
+            <button class="icon-action"><i data-lucide="user" size="20"></i></button>
+            <button class="icon-action">
+                <i data-lucide="shopping-cart" size="20"></i>
+                <span style="position:absolute; top:-5px; right:-5px; background:var(--accent); color:white; font-size:10px; font-weight:700; width:16px; height:16px; display:flex; align-items:center; justify-content:center; border-radius:50%">0</span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i data-lucide="sliders-horizontal" size="20"></i> Filters
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-title">Categories</div>
+                <div class="filter-list">
+                    <label class="filter-item"><input type="checkbox" checked> Bathroom Faucets</label>
+                    <label class="filter-item"><input type="checkbox"> Rain Showers</label>
+                    <label class="filter-item"><input type="checkbox"> Wash Basins</label>
+                    <label class="filter-item"><input type="checkbox"> Mirror Cabinets</label>
+                    <label class="filter-item"><input type="checkbox"> Accessories</label>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-title">Status</div>
+                <div class="filter-list">
+                    <label class="filter-item"><input type="checkbox"> In Stock</label>
+                    <label class="filter-item"><input type="checkbox"> On Sale</label>
+                    <label class="filter-item"><input type="checkbox"> New Arrivals</label>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Product Area -->
+        <main class="content">
+            <div class="content-header">
+                <div class="search-box">
+                    <i data-lucide="search" size="18" style="color: rgba(255,255,255,0.6)"></i>
+                    <input type="text" placeholder="Search products...">
+                </div>
+                
+                <div class="sort-box">
+                    <span>Sort by:</span>
+                    <select class="sort-select">
+                        <option value="newest">Newest First</option>
+                        <option value="price-asc">Price: Low to High</option>
+                        <option value="price-desc">Price: High to Low</option>
+                        <option value="rating">Top Rated</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Product Grid -->
+            <div class="grid" id="productGrid">
+                <!-- Javascript will inject perfectly cloned React components here -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Exact match of the React Product interface
+        const products = [
+            {
+                _id: "1",
+                name: "Aura Matte Black Rain Shower System",
+                categoryName: "Rain Showers",
+                price: 15999,
+                discountPrice: 12499,
+                discountPercentage: 22,
+                images: [{ url: "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=600&q=80" }],
+                ratings: 4.9,
+                numReviews: 89,
+                stock: 15,
+                isNewArrival: false,
+                isBestSeller: true
+            },
+            {
+                _id: "2",
+                name: "Cascada Premium Chrome Basin Faucet",
+                categoryName: "Bathroom Faucets",
+                price: 3799,
+                discountPrice: null,
+                images: [{ url: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=600&q=80" }],
+                ratings: 4.8,
+                numReviews: 124,
+                stock: 45,
+                isNewArrival: true,
+                isBestSeller: false
+            },
+            {
+                _id: "3",
+                name: "Zenith Ceramic Countertop Basin",
+                categoryName: "Wash Basins",
+                price: 6299,
+                discountPrice: null,
+                images: [{ url: "https://images.unsplash.com/photo-1595515106969-1ce29566ff1c?auto=format&fit=crop&w=600&q=80" }],
+                ratings: 4.5,
+                numReviews: 56,
+                stock: 0, // Out of stock test
+                isNewArrival: false,
+                isBestSeller: false
+            },
+            {
+                _id: "4",
+                name: "Lumina LED Bathroom Mirror 60x80",
+                categoryName: "Mirror Cabinets",
+                price: 8999,
+                discountPrice: 7999,
+                discountPercentage: 11,
+                images: [{ url: "https://images.unsplash.com/photo-1615873968403-89e068629265?auto=format&fit=crop&w=600&q=80" }],
+                ratings: 5.0,
+                numReviews: 12,
+                stock: 8,
+                isNewArrival: true,
+                isBestSeller: true
+            }
+        ];
+
+        function renderProducts() {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = '';
+
+            products.forEach(product => {
+                const displayPrice = product.discountPrice || product.price;
+                const hasDiscount = product.discountPrice && product.discountPrice < product.price;
+
+                let badgeHTML = '';
+                if (hasDiscount) {
+                    badgeHTML = `<div class="badge badge-discount">-${product.discountPercentage}%</div>`;
+                } else if (product.isNewArrival) {
+                    badgeHTML = `<div class="badge badge-new">NEW</div>`;
+                } else if (product.isBestSeller) {
+                    badgeHTML = `<div class="badge badge-bestseller">BESTSELLER</div>`;
+                }
+
+                const ratingStars = Array.from({length: 5}).map((_, i) => 
+                    `<i data-lucide="star" style="width:11px; height:11px; ${i < Math.round(product.ratings) ? 'color:#fbbf24; fill:#fbbf24' : 'color:rgba(255,255,255,0.15)'}"></i>`
+                ).join('');
+
+                const cardHTML = `
+                    <div class="card-product group">
+                        <div class="img-container">
+                            <img src="${product.images[0].url}" alt="${product.name}">
+                            ${badgeHTML}
+                            <button class="btn-wishlist" onclick="toggleWishlist(this)">
+                                <i data-lucide="heart" size="15"></i>
+                            </button>
+                            <div class="quick-add">
+                                <button class="btn-primary" ${product.stock === 0 ? 'disabled style="opacity:0.5; cursor:not-allowed"' : ''}>
+                                    <i data-lucide="shopping-cart" size="15"></i>
+                                    ${product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
+                                </button>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <p class="category-name">${product.categoryName}</p>
+                            <h3 class="product-name">${product.name}</h3>
+                            <div class="rating">
+                                <div style="display:flex">${ratingStars}</div>
+                                <span class="rating-text">(${product.numReviews})</span>
+                            </div>
+                            <div class="price-row">
+                                <span class="price">₹${displayPrice.toLocaleString('en-IN')}</span>
+                                ${hasDiscount ? `<span class="old-price">₹${product.price.toLocaleString('en-IN')}</span>` : ''}
+                                ${product.stock === 0 ? `<span class="stock-out">Out of Stock</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += cardHTML;
+            });
+            
+            lucide.createIcons();
+        }
+
+        function toggleWishlist(btn) {
+            btn.classList.toggle('active');
+            const icon = btn.querySelector('svg');
+            if(btn.classList.contains('active')) {
+                icon.setAttribute('fill', 'currentColor');
+            } else {
+                icon.setAttribute('fill', 'none');
+            }
+        }
+
+        renderProducts();
+    </script>
+</body>
+</html>

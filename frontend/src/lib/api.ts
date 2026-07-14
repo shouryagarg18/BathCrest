@@ -1,10 +1,11 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://maintaining-nearby-students-trusts.trycloudflare.com/api';
 
 function getAuthHeaders(): HeadersInit {
-  if (typeof window === 'undefined') return { 'Content-Type': 'application/json' };
+  if (typeof window === 'undefined') return { 'Content-Type': 'application/json', 'Bypass-Tunnel-Reminder': 'true' };
   const token = localStorage.getItem('bathcrest_token');
   return {
     'Content-Type': 'application/json',
+    'Bypass-Tunnel-Reminder': 'true',
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 }

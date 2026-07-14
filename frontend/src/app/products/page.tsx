@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import type { Product } from '@/types';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://maintaining-nearby-students-trusts.trycloudflare.com/api';
 
 const SORT_OPTIONS = [
   { value: 'newest', label: 'Newest First' },
@@ -220,8 +220,10 @@ function ProductsContent() {
         setTotal(data.total);
         setPages(data.pages);
       }
-    } catch (err) {
-      console.error('Failed to fetch products', err);
+    } catch (err: any) {
+      console.error('Failed to fetch products:', err.message || err);
+      // Optional: show a toast to the user
+      // setToast('Failed to load products. Is the server running?');
     } finally {
       setLoading(false);
     }
