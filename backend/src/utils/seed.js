@@ -5,7 +5,7 @@ const Product = require('../models/Product');
 const Category = require('../models/Category');
 const Coupon = require('../models/Coupon');
 
-const MONGO_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/bathcrest';
+const MONGO_URI = process.env.MONGODB_URI || 'mongodb://shouryagarg1808_db_user:FO2uKXmmYDGl4bK4@ac-qi0zfhq-shard-00-00.pvdhewc.mongodb.net:27017,ac-qi0zfhq-shard-00-01.pvdhewc.mongodb.net:27017,ac-qi0zfhq-shard-00-02.pvdhewc.mongodb.net:27017/bathcrest?ssl=true&authSource=admin&retryWrites=true&w=majority';
 
 // Premium, realistic Unsplash & Pexels images for bathroom hardware
 const IMAGE_LIBRARY = {
@@ -796,7 +796,8 @@ async function seed() {
     console.log('🗑️  Cleared existing data');
 
     // Create categories
-    const createdCategories = await Category.insertMany(categories);
+    const cats = categories.map(c => ({...c, slug: c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}));
+    const createdCategories = await Category.insertMany(cats);
     console.log(`✅ Created ${createdCategories.length} categories`);
 
     // Create admin user
