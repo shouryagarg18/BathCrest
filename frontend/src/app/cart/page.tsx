@@ -21,7 +21,7 @@ interface CouponData {
   discountValue: number;
 }
 
-const API_URL = 'https://measure-worship-fiber-mean.trycloudflare.com/api';
+const API_URL = 'https://bathcrest.onrender.com/api';
 const SHIPPING_THRESHOLD = 1999;
 const SHIPPING_COST = 299;
 const TAX_RATE = 0.18;

@@ -324,7 +324,7 @@ function FeaturedProducts() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${'https://measure-worship-fiber-mean.trycloudflare.com/api'}/products/featured`)
+    fetch(`${'https://bathcrest.onrender.com/api'}/products/featured`)
       .then(r => r.json())
       .then(d => { if (d.success) setProducts(d.products.slice(0, 8)); })
       .catch(() => {})
@@ -418,7 +418,7 @@ function BestSellers() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${'https://measure-worship-fiber-mean.trycloudflare.com/api'}/products/bestsellers`)
+    fetch(`${'https://bathcrest.onrender.com/api'}/products/bestsellers`)
       .then(r => r.json())
       .then(d => { if (d.success) setProducts(d.products.slice(0, 4)); })
       .catch(() => {})

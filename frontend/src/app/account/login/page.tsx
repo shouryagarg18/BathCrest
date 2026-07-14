@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Eye, EyeOff, ArrowRight } from 'lucide-react';
 
-const API_URL = 'https://measure-worship-fiber-mean.trycloudflare.com/api';
+const API_URL = 'https://bathcrest.onrender.com/api';
 
 export default function LoginPage() {
   return (

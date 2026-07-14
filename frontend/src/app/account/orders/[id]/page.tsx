@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { Package, ChevronRight, Clock, Truck, CheckCircle, XCircle, MapPin, CreditCard } from 'lucide-react';
 
-const API_URL = 'https://measure-worship-fiber-mean.trycloudflare.com/api';
+const API_URL = 'https://bathcrest.onrender.com/api';
 
 interface OrderItem {
   name: string;

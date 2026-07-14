@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Package, Search, Plus, ArrowLeft, Edit2, Trash2, ChevronLeft, ChevronRight, CheckCircle, AlertCircle } from 'lucide-react';
 
-const API_URL = 'https://measure-worship-fiber-mean.trycloudflare.com/api';
+const API_URL = 'https://bathcrest.onrender.com/api';
 
 function AdminProductsContent() {
   const router = useRouter();

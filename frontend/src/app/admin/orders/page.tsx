@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ShoppingCart, LogOut, ArrowLeft, Search, Eye } from 'lucide-react';
 
-const API_URL = 'https://measure-worship-fiber-mean.trycloudflare.com/api';
+const API_URL = 'https://bathcrest.onrender.com/api';
 
 const STATUS_COLORS: Record<string, string> = {
   processing: 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20',
