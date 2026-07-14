@@ -6,6 +6,14 @@ import Link from 'next/link';
 import { CheckCircle, Package, Truck, ArrowRight } from 'lucide-react';
 
 export default function OrderSuccessPage() {
+  return (
+    <React.Suspense fallback={<div className="min-h-screen bg-[#0c0a09] flex items-center justify-center"><div className="w-10 h-10 border-2 border-[#8b5e34]/30 border-t-[#8b5e34] rounded-full animate-spin" /></div>}>
+      <OrderSuccessContent />
+    </React.Suspense>
+  );
+}
+
+function OrderSuccessContent() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get('orderId');
   const total = searchParams.get('total');
