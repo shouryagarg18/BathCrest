@@ -145,7 +145,7 @@ function HeroSection() {
         </p>
 
         {/* CTA Buttons */}
-        <div className="flex flex-wrap gap-4 justify-center mb-16">
+        <div className="flex flex-wrap gap-4 justify-center mt-6 mb-16">
           <Link href="/products" className="btn-primary text-lg px-10 py-4">
             Shop Now
             <ArrowRight size={20} />
