@@ -140,12 +140,12 @@ function HeroSection() {
         </h1>
 
         {/* Subtitle */}
-        <p className="section-subheading mb-32">
+        <p className="section-subheading mb-40">
           Elevate your space with BathCrest's luxury collection of faucets, rain showers, basins, and sanitaryware — where elegance meets engineering.
         </p>
 
         {/* CTA Buttons */}
-        <div className="flex flex-wrap gap-4 justify-center mb-16">
+        <div className="flex flex-wrap gap-4 justify-center mb-12">
           <Link href="/products" className="btn-primary text-lg px-10 py-4">
             Shop Now
             <ArrowRight size={20} />
