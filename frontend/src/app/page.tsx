@@ -132,7 +132,7 @@ function HeroSection() {
           Premium Bathroom Hardware since 2010
         </div>
 
-        <div className="-mt-4 md:-mt-8">
+        <div className="-mt-8 md:-mt-16">
           {/* Main Heading */}
           <h1 className="text-gradient section-heading mb-8" style={{ fontSize: 'clamp(3rem, 8vw, 6rem)', lineHeight: 1.25 }}>
             Premium Bathroom<br />
@@ -141,7 +141,7 @@ function HeroSection() {
           </h1>
 
           {/* Subtitle */}
-          <p className="section-subheading mb-16">
+          <p className="section-subheading mb-32">
             Elevate your space with BathCrest's luxury collection of faucets, rain showers, basins, and sanitaryware — where elegance meets engineering.
           </p>
 
