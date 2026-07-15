@@ -127,26 +127,25 @@ function HeroSection() {
       {/* Content */}
       <div className="section-container relative z-10 text-center w-full">
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-8 text-sm font-medium text-[#d4b895]">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-6 text-sm font-medium text-[#d4b895]">
           <div className="w-2 h-2 rounded-full bg-[#8b5e34] animate-pulse" />
           Premium Bathroom Hardware since 2010
         </div>
 
-        <div className="-mt-8 md:-mt-16">
-          {/* Main Heading */}
-          <h1 className="text-gradient section-heading mb-8" style={{ fontSize: 'clamp(3rem, 8vw, 6rem)', lineHeight: 1.25 }}>
-            Premium Bathroom<br />
-            <span className="text-gradient-blue">Hardware &amp; Sanitary</span><br />
-            Solutions
-          </h1>
+        {/* Main Heading */}
+        <h1 className="text-gradient section-heading mb-6" style={{ fontSize: 'clamp(3rem, 8vw, 6rem)', lineHeight: 1.25 }}>
+          Premium Bathroom<br />
+          <span className="text-gradient-blue">Hardware &amp; Sanitary</span><br />
+          Solutions
+        </h1>
 
-          {/* Subtitle */}
-          <p className="section-subheading mb-32">
-            Elevate your space with BathCrest's luxury collection of faucets, rain showers, basins, and sanitaryware — where elegance meets engineering.
-          </p>
+        {/* Subtitle */}
+        <p className="section-subheading mb-10">
+          Elevate your space with BathCrest's luxury collection of faucets, rain showers, basins, and sanitaryware — where elegance meets engineering.
+        </p>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-wrap gap-4 justify-center mb-16">
+        {/* CTA Buttons */}
+        <div className="flex flex-wrap gap-4 justify-center mb-16">
           <Link href="/products" className="btn-primary text-lg px-10 py-4">
             Shop Now
             <ArrowRight size={20} />
@@ -154,7 +153,6 @@ function HeroSection() {
           <Link href="/products?isFeatured=true" className="btn-secondary text-lg px-10 py-4">
             Explore Collection
           </Link>
-        </div>
         </div>
 
         {/* Stats */}
