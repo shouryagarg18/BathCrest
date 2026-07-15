@@ -132,20 +132,21 @@ function HeroSection() {
           Premium Bathroom Hardware since 2010
         </div>
 
-        {/* Main Heading */}
-        <h1 className="text-gradient section-heading mb-8" style={{ fontSize: 'clamp(3rem, 8vw, 6rem)', lineHeight: 1.25 }}>
-          Premium Bathroom<br />
-          <span className="text-gradient-blue">Hardware &amp; Sanitary</span><br />
-          Solutions
-        </h1>
+        <div className="-mt-4 md:-mt-8">
+          {/* Main Heading */}
+          <h1 className="text-gradient section-heading mb-8" style={{ fontSize: 'clamp(3rem, 8vw, 6rem)', lineHeight: 1.25 }}>
+            Premium Bathroom<br />
+            <span className="text-gradient-blue">Hardware &amp; Sanitary</span><br />
+            Solutions
+          </h1>
 
-        {/* Subtitle */}
-        <p className="section-subheading mb-40">
-          Elevate your space with BathCrest's luxury collection of faucets, rain showers, basins, and sanitaryware — where elegance meets engineering.
-        </p>
+          {/* Subtitle */}
+          <p className="section-subheading mb-16">
+            Elevate your space with BathCrest's luxury collection of faucets, rain showers, basins, and sanitaryware — where elegance meets engineering.
+          </p>
 
-        {/* CTA Buttons */}
-        <div className="flex flex-wrap gap-4 justify-center mb-12">
+          {/* CTA Buttons */}
+          <div className="flex flex-wrap gap-4 justify-center mb-16">
           <Link href="/products" className="btn-primary text-lg px-10 py-4">
             Shop Now
             <ArrowRight size={20} />
@@ -153,6 +154,7 @@ function HeroSection() {
           <Link href="/products?isFeatured=true" className="btn-secondary text-lg px-10 py-4">
             Explore Collection
           </Link>
+        </div>
         </div>
 
         {/* Stats */}
