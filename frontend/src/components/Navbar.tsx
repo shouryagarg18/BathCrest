@@ -22,8 +22,8 @@ const CATEGORIES_NAV = [
   ['PVC Accessories', 'Angle Valves', 'Bathroom Mirrors', 'Accessories'],
 ];
 
-const SPRING = { type: 'spring', stiffness: 380, damping: 30 };
-const EASE_OUT = { duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] };
+const SPRING = { type: 'spring' as const, stiffness: 380, damping: 30 };
+const EASE_OUT = { duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] };
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
