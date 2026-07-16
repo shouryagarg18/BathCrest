@@ -150,14 +150,16 @@ export default function Footer() {
           {/* Social Icons */}
           <div className="flex items-center gap-3">
             {[
-              { icon: <IconInstagram />, href: '#', label: 'Instagram' },
-              { icon: <IconFacebook />, href: '#', label: 'Facebook' },
-              { icon: <IconLinkedin />, href: '#', label: 'LinkedIn' },
-              { icon: <IconX />, href: '#', label: 'X (Twitter)' },
+              { icon: <IconInstagram />, href: 'https://www.instagram.com/ishouryagarg/', label: 'Instagram' },
+              { icon: <IconFacebook />, href: 'https://www.facebook.com/ishouryagarg', label: 'Facebook' },
+              { icon: <IconLinkedin />, href: 'https://www.linkedin.com/in/shourya-garg-18b57a420/', label: 'LinkedIn' },
+              { icon: <IconX />, href: 'https://x.com/ShouryaGarg39', label: 'X (Twitter)' },
             ].map((social) => (
               <a
                 key={social.label}
                 href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label={social.label}
                 className="w-9 h-9 rounded-lg glass flex items-center justify-center text-white/50 hover:text-white hover:border-white/20 transition-all"
               >
