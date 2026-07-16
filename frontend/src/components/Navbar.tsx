@@ -1,13 +1,9 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
-import {
-  ShoppingCart, Heart, Search, Menu, X, User, ChevronDown, ChevronRight,
-  LogOut, Package, MapPin, Shield, ArrowRight
-} from 'lucide-react';
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface NavUser {
   name: string;
@@ -16,54 +12,151 @@ interface NavUser {
 }
 
 const CATEGORIES_NAV = [
-  ['Bathroom Faucets', 'Rain Showers', 'Health Faucets', 'Wash Basins'],
-  ['Kitchen Faucets', 'Soap Dispensers', 'Mirror Cabinets', 'Shower Panels'],
-  ['Towel Holders', 'Toilet Seats', 'Flush Systems', 'Vanity Units'],
-  ['PVC Accessories', 'Angle Valves', 'Bathroom Mirrors', 'Accessories'],
+  'Bathroom Faucets', 'Rain Showers', 'Health Faucets', 'Wash Basins',
+  'Kitchen Faucets', 'Soap Dispensers', 'Mirror Cabinets', 'Shower Panels',
+  'Towel Holders', 'Toilet Seats', 'Flush Systems', 'Vanity Units',
+  'PVC Accessories', 'Angle Valves', 'Bathroom Mirrors', 'Accessories',
 ];
 
-const SPRING = { type: 'spring' as const, stiffness: 380, damping: 30 };
-const EASE_OUT = { duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] };
+// ── SVG Icons (inline for crisp rendering at small sizes) ──────────────────
+const IconSearch = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+  </svg>
+);
+const IconHeart = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+  </svg>
+);
+const IconCart = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+  </svg>
+);
+const IconUser = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+  </svg>
+);
+const IconMenu = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+    <line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/>
+  </svg>
+);
+const IconClose = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+  </svg>
+);
+const IconChevronDown = () => (
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <polyline points="6 9 12 15 18 9"/>
+  </svg>
+);
+const IconLogout = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+  </svg>
+);
+const IconPackage = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
+  </svg>
+);
+const IconShield = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+  </svg>
+);
+const IconMapPin = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+  </svg>
+);
 
+// ── Custom Gold Cursor ──────────────────────────────────────────────────────
+function GoldCursor() {
+  const dotRef = useRef<HTMLDivElement>(null);
+  const ringRef = useRef<HTMLDivElement>(null);
+  const mouse = useRef({ x: 0, y: 0 });
+  const ring = useRef({ x: 0, y: 0 });
+  const rafId = useRef<number>(0);
+
+  useEffect(() => {
+    const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
+    if (isTouchDevice) return;
+
+    const onMove = (e: MouseEvent) => {
+      mouse.current = { x: e.clientX, y: e.clientY };
+      if (dotRef.current) {
+        dotRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+      }
+    };
+
+    const animateRing = () => {
+      ring.current.x += (mouse.current.x - ring.current.x) * 0.12;
+      ring.current.y += (mouse.current.y - ring.current.y) * 0.12;
+      if (ringRef.current) {
+        ringRef.current.style.transform = `translate(${ring.current.x}px, ${ring.current.y}px)`;
+      }
+      rafId.current = requestAnimationFrame(animateRing);
+    };
+
+    const onEnterLink = () => ringRef.current?.classList.add('cursor-hover');
+    const onLeaveLink = () => ringRef.current?.classList.remove('cursor-hover');
+
+    document.addEventListener('mousemove', onMove);
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', onEnterLink);
+      el.addEventListener('mouseleave', onLeaveLink);
+    });
+    rafId.current = requestAnimationFrame(animateRing);
+
+    return () => {
+      document.removeEventListener('mousemove', onMove);
+      cancelAnimationFrame(rafId.current);
+    };
+  }, []);
+
+  return (
+    <>
+      <div ref={dotRef} className="cursor-dot" />
+      <div ref={ringRef} className="cursor-ring" />
+    </>
+  );
+}
+
+// ── Main Navbar ─────────────────────────────────────────────────────────────
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [hidden, setHidden] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [megaMenuOpen, setMegaMenuOpen] = useState(false);
+  const [megaOpen, setMegaOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [user, setUser] = useState<NavUser | null>(null);
   const [cartCount, setCartCount] = useState(0);
   const [wishlistCount, setWishlistCount] = useState(0);
-  const [activeLink, setActiveLink] = useState('');
-  const lastScrollY = useRef(0);
 
   const router = useRouter();
   const pathname = usePathname();
   const searchRef = useRef<HTMLInputElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
-  const megaRef = useRef<HTMLDivElement>(null);
-  const { scrollY } = useScroll();
-
-  // Smart hide-on-scroll
-  useMotionValueEvent(scrollY, 'change', (y) => {
-    const delta = y - lastScrollY.current;
-    setScrolled(y > 40);
-    if (y > 120 && delta > 8) setHidden(true);
-    else if (delta < -8) setHidden(false);
-    lastScrollY.current = y;
-  });
 
   useEffect(() => {
-    setActiveLink(pathname);
-  }, [pathname]);
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   useEffect(() => {
     try {
       const token = localStorage.getItem('bathcrest_token');
       const userData = localStorage.getItem('bathcrest_user');
       if (token && userData) setUser(JSON.parse(userData));
+      else setUser(null);
     } catch {}
   }, [pathname]);
 
@@ -81,7 +174,6 @@ export default function Navbar() {
     } catch {}
   }, [pathname]);
 
-  // Close dropdowns on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
@@ -92,7 +184,6 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  // Lock body scroll when mobile menu or search is open
   useEffect(() => {
     document.body.style.overflow = (mobileOpen || searchOpen) ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
@@ -123,391 +214,229 @@ export default function Navbar() {
   ];
 
   const profileItems = [
-    { icon: <User size={15} />, label: 'My Profile', href: '/account/profile' },
-    { icon: <Package size={15} />, label: 'My Orders', href: '/account/orders' },
-    { icon: <Heart size={15} />, label: 'Wishlist', href: '/account/wishlist' },
-    { icon: <MapPin size={15} />, label: 'Addresses', href: '/account/addresses' },
-    ...(user?.role === 'admin' ? [{ icon: <Shield size={15} />, label: 'Admin Panel', href: '/admin' }] : []),
+    { icon: <IconUser />, label: 'My Profile', href: '/account/profile' },
+    { icon: <IconPackage />, label: 'My Orders', href: '/account/orders' },
+    { icon: <IconHeart />, label: 'Wishlist', href: '/account/wishlist' },
+    { icon: <IconMapPin />, label: 'Addresses', href: '/account/addresses' },
+    ...(user?.role === 'admin' ? [{ icon: <IconShield />, label: 'Admin Panel', href: '/admin' }] : []),
   ];
 
   return (
     <>
-      {/* ── Main Nav ───────────────────────────────────── */}
-      <motion.nav
-        initial={false}
-        animate={{
-          y: hidden ? -110 : 0,
-          opacity: hidden ? 0 : 1,
+      <GoldCursor />
+
+      {/* ── Navbar ───────────────────────────────────────────── */}
+      <nav
+        className="navbar-luxury"
+        style={{
+          position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
+          transition: 'background 0.5s ease, border-color 0.5s ease, backdrop-filter 0.5s ease',
+          background: scrolled ? 'rgba(10,10,10,0.95)' : 'transparent',
+          backdropFilter: scrolled ? 'blur(20px)' : 'none',
+          WebkitBackdropFilter: scrolled ? 'blur(20px)' : 'none',
+          borderBottom: scrolled ? '1px solid rgba(255,255,255,0.05)' : '1px solid transparent',
         }}
-        transition={SPRING}
-        className="fixed top-0 left-0 right-0 z-50"
-        style={{ height: '72px' }}
       >
-        {/* Background layer — morphs from transparent → frosted glass */}
-        <motion.div
-          className="absolute inset-0"
-          animate={{
-            backgroundColor: scrolled ? 'rgba(10, 8, 7, 0.88)' : 'rgba(10, 8, 7, 0)',
-            backdropFilter: scrolled ? 'blur(28px) saturate(180%)' : 'blur(0px)',
-            borderBottomColor: scrolled ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0)',
-          }}
-          transition={{ duration: 0.4, ease: 'easeOut' }}
-          style={{ borderBottomWidth: 1, borderBottomStyle: 'solid' }}
-        />
+        <div className="lux-wrap lux-nav-inner">
 
-        <div className="section-container h-full flex items-center justify-between gap-4 relative">
-
-          {/* ── Logo ───────────────────────────── */}
-          <Link href="/" className="flex items-center gap-3 group flex-shrink-0">
-            <motion.div
-              whileHover={{ scale: 1.08, rotate: 3 }}
-              whileTap={{ scale: 0.95 }}
-              transition={SPRING}
-              className="w-9 h-9 rounded-[10px] bg-gradient-to-br from-[#a06832] via-[#8b5e34] to-[#5c3a21] flex items-center justify-center text-white font-black text-sm shadow-lg shadow-[#8b5e34]/30"
-            >
-              BC
-            </motion.div>
-            <span className="text-white font-bold text-xl tracking-tight">
-              Bath<span className="text-gradient-blue">Crest</span>
+          {/* Logo */}
+          <Link href="/" className="lux-logo">
+            <span className="lux-logo-text">
+              BATH<span className="lux-gold">CREST</span>
             </span>
+            <span className="lux-logo-sub">Luxury Bathroom Hardware</span>
           </Link>
 
-          {/* ── Desktop Nav Links ───────────────── */}
-          <div className="hidden lg:flex items-center gap-0.5">
-            {navLinks.map((link) => {
-              const isActive = activeLink === link.href;
-              return (
-                <div
-                  key={link.href}
-                  className="relative"
-                  onMouseEnter={() => link.hasMega && setMegaMenuOpen(true)}
-                  onMouseLeave={() => link.hasMega && setMegaMenuOpen(false)}
-                  ref={link.hasMega ? megaRef : undefined}
+          {/* Desktop Links */}
+          <div className="lux-nav-links">
+            {navLinks.map((link) => (
+              <div
+                key={link.href}
+                className="lux-nav-item"
+                onMouseEnter={() => link.hasMega && setMegaOpen(true)}
+                onMouseLeave={() => link.hasMega && setMegaOpen(false)}
+              >
+                <Link
+                  href={link.href}
+                  className={`lux-nav-link gold-underline${pathname === link.href ? ' lux-nav-link-active' : ''}`}
                 >
-                  <Link
-                    href={link.href}
-                    className={`relative flex items-center gap-1 px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200 ${
-                      isActive ? 'text-white' : 'text-white/55 hover:text-white'
-                    }`}
-                  >
-                    {/* Animated pill background */}
-                    {isActive && (
-                      <motion.span
-                        layoutId="nav-pill"
-                        className="absolute inset-0 rounded-xl bg-white/10"
-                        transition={SPRING}
-                      />
-                    )}
-                    <span className="relative z-10">{link.label}</span>
-                    {link.hasMega && (
-                      <motion.span
-                        className="relative z-10"
-                        animate={{ rotate: megaMenuOpen ? 180 : 0 }}
-                        transition={EASE_OUT}
-                      >
-                        <ChevronDown size={13} />
-                      </motion.span>
-                    )}
-                  </Link>
+                  {link.label.toUpperCase()}
+                  {link.hasMega && (
+                    <span style={{
+                      marginLeft: 4, display: 'inline-block',
+                      transition: 'transform 0.3s ease',
+                      transform: megaOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                      verticalAlign: 'middle'
+                    }}>
+                      <IconChevronDown />
+                    </span>
+                  )}
+                </Link>
 
-                  {/* ── Mega Menu ──────────────────── */}
-                  <AnimatePresence>
-                    {link.hasMega && megaMenuOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 14, scale: 0.97 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 14, scale: 0.97 }}
-                        transition={EASE_OUT}
-                        className="absolute top-full mt-3 left-1/2 -translate-x-1/2 w-[680px] rounded-2xl overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,0.7)] border border-white/[0.08]"
-                        style={{ background: 'rgba(13,11,10,0.97)', backdropFilter: 'blur(32px)' }}
-                      >
-                        {/* Header */}
-                        <div className="px-7 pt-6 pb-4 border-b border-white/[0.07] flex items-center justify-between">
-                          <div>
-                            <p className="text-[11px] font-semibold text-[#8b5e34] uppercase tracking-widest mb-0.5">Explore</p>
-                            <h3 className="text-white font-bold text-lg tracking-tight">All Categories</h3>
-                          </div>
+                {/* Mega menu */}
+                <AnimatePresence>
+                  {link.hasMega && megaOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 12 }}
+                      transition={{ duration: 0.22, ease: 'easeOut' }}
+                      className="lux-mega"
+                    >
+                      <div className="lux-mega-header">
+                        <span className="lux-eyebrow">Browse Collection</span>
+                        <Link href="/products" className="lux-mega-viewall">View All →</Link>
+                      </div>
+                      <div className="lux-mega-grid">
+                        {CATEGORIES_NAV.map((cat, i) => (
                           <Link
-                            href="/products"
-                            className="flex items-center gap-1.5 text-[#8b5e34] hover:text-[#d4b895] text-sm font-semibold transition-colors group"
+                            key={cat}
+                            href={`/products?category=${encodeURIComponent(cat)}`}
+                            className="lux-mega-link"
+                            style={{ animationDelay: `${i * 20}ms` }}
                           >
-                            View Full Collection
-                            <motion.span whileHover={{ x: 3 }} transition={SPRING}>
-                              <ArrowRight size={14} />
-                            </motion.span>
+                            {cat}
                           </Link>
-                        </div>
-
-                        {/* Grid */}
-                        <div className="p-5 grid grid-cols-4 gap-1">
-                          {CATEGORIES_NAV.flat().map((cat, i) => (
-                            <motion.div
-                              key={cat}
-                              initial={{ opacity: 0, y: 8 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: i * 0.018, ...EASE_OUT }}
-                            >
-                              <Link
-                                href={`/products?category=${encodeURIComponent(cat)}`}
-                                className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-white/50 hover:text-white hover:bg-white/[0.06] text-[13px] transition-all group"
-                              >
-                                <span className="w-1 h-1 rounded-full bg-white/20 group-hover:bg-[#8b5e34] group-hover:scale-125 transition-all" />
-                                {cat}
-                              </Link>
-                            </motion.div>
-                          ))}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              );
-            })}
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
           </div>
 
-          {/* ── Right Actions ──────────────────── */}
-          <div className="flex items-center gap-1">
-
+          {/* Right Actions */}
+          <div className="lux-nav-actions">
             {/* Search */}
-            <motion.button
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.93 }}
-              transition={SPRING}
+            <button
+              className="lux-icon-btn"
               onClick={() => { setSearchOpen(true); setTimeout(() => searchRef.current?.focus(), 80); }}
-              className="w-9 h-9 flex items-center justify-center rounded-xl text-white/50 hover:text-white hover:bg-white/[0.07] transition-colors"
               aria-label="Search"
             >
-              <Search size={17} />
-            </motion.button>
+              <IconSearch />
+            </button>
 
             {/* Wishlist */}
-            <motion.div whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.93 }} transition={SPRING}>
-              <Link
-                href="/account/wishlist"
-                className="relative w-9 h-9 flex items-center justify-center rounded-xl text-white/50 hover:text-white hover:bg-white/[0.07] transition-colors"
-                aria-label="Wishlist"
-              >
-                <Heart size={17} />
-                <AnimatePresence>
-                  {wishlistCount > 0 && (
-                    <motion.span
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      exit={{ scale: 0, opacity: 0 }}
-                      transition={SPRING}
-                      className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#8b5e34] text-white text-[9px] font-bold rounded-full flex items-center justify-center"
-                    >
-                      {wishlistCount}
-                    </motion.span>
-                  )}
-                </AnimatePresence>
-              </Link>
-            </motion.div>
+            <Link href="/account/wishlist" className="lux-icon-btn" aria-label="Wishlist" style={{ position: 'relative' }}>
+              <IconHeart />
+              {wishlistCount > 0 && <span className="lux-badge">{wishlistCount}</span>}
+            </Link>
 
             {/* Cart */}
-            <motion.div whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.93 }} transition={SPRING}>
-              <Link
-                href="/cart"
-                className="relative w-9 h-9 flex items-center justify-center rounded-xl text-white/50 hover:text-white hover:bg-white/[0.07] transition-colors"
-                aria-label="Cart"
-              >
-                <ShoppingCart size={17} />
-                <AnimatePresence>
-                  {cartCount > 0 && (
-                    <motion.span
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      exit={{ scale: 0, opacity: 0 }}
-                      transition={SPRING}
-                      className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#8b5e34] text-white text-[9px] font-bold rounded-full flex items-center justify-center"
-                    >
-                      {cartCount}
-                    </motion.span>
-                  )}
-                </AnimatePresence>
-              </Link>
-            </motion.div>
+            <Link href="/cart" className="lux-icon-btn" aria-label="Cart" style={{ position: 'relative' }}>
+              <IconCart />
+              {cartCount > 0 && <span className="lux-badge">{cartCount}</span>}
+            </Link>
 
-            {/* ── User / Profile ──────────────── */}
-            <div className="relative hidden md:block ml-1" ref={profileRef}>
+            {/* User — desktop only */}
+            <div ref={profileRef} className="lux-user-wrap">
               {user ? (
                 <>
-                  <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    transition={SPRING}
+                  <button
+                    className="lux-icon-btn lux-user-btn"
                     onClick={() => setProfileOpen(!profileOpen)}
-                    className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl border border-white/[0.09] bg-white/[0.04] hover:bg-white/[0.08] text-white/80 hover:text-white transition-all text-sm"
+                    aria-label="Account"
                   >
-                    <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[#a06832] to-[#5c3a21] flex items-center justify-center text-white text-[11px] font-bold">
-                      {user.name[0].toUpperCase()}
-                    </div>
-                    <span className="hidden lg:block max-w-[80px] truncate text-[13px] font-medium">
-                      {user.name.split(' ')[0]}
+                    <span className="lux-user-initial">{user.name[0].toUpperCase()}</span>
+                    <span className="lux-user-name">{user.name.split(' ')[0]}</span>
+                    <span style={{ marginLeft: 4, display: 'inline-block', transition: 'transform 0.3s ease', transform: profileOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+                      <IconChevronDown />
                     </span>
-                    <motion.span
-                      animate={{ rotate: profileOpen ? 180 : 0 }}
-                      transition={EASE_OUT}
-                    >
-                      <ChevronDown size={12} className="text-white/40" />
-                    </motion.span>
-                  </motion.button>
+                  </button>
 
-                  {/* Profile Dropdown */}
                   <AnimatePresence>
                     {profileOpen && (
                       <motion.div
-                        initial={{ opacity: 0, y: 10, scale: 0.96 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10, scale: 0.96 }}
-                        transition={EASE_OUT}
-                        className="absolute right-0 top-full mt-2 w-56 rounded-2xl overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.6)] border border-white/[0.08]"
-                        style={{ background: 'rgba(13,11,10,0.97)', backdropFilter: 'blur(32px)' }}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        transition={{ duration: 0.18, ease: 'easeOut' }}
+                        className="lux-dropdown"
                       >
-                        {/* User info */}
-                        <div className="px-4 py-3.5 border-b border-white/[0.07]">
-                          <div className="font-semibold text-white text-sm truncate">{user.name}</div>
-                          <div className="text-white/35 text-xs truncate mt-0.5">{user.email}</div>
+                        <div className="lux-dropdown-header">
+                          <div className="lux-dropdown-name">{user.name}</div>
+                          <div className="lux-dropdown-email">{user.email}</div>
                         </div>
-
-                        <div className="py-1.5">
-                          {profileItems.map((item, i) => (
-                            <motion.div
-                              key={item.href}
-                              initial={{ opacity: 0, x: -6 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: i * 0.04, ...EASE_OUT }}
-                            >
-                              <Link
-                                href={item.href}
-                                onClick={() => setProfileOpen(false)}
-                                className="flex items-center gap-3 px-4 py-2.5 text-white/60 hover:text-white hover:bg-white/[0.05] text-[13px] transition-all"
-                              >
-                                <span className="text-white/30">{item.icon}</span>
-                                {item.label}
-                              </Link>
-                            </motion.div>
-                          ))}
-                        </div>
-
-                        <div className="border-t border-white/[0.07] py-1.5">
-                          <button
-                            onClick={handleLogout}
-                            className="w-full flex items-center gap-3 px-4 py-2.5 text-red-400/80 hover:text-red-400 hover:bg-red-500/[0.07] text-[13px] transition-all"
+                        {profileItems.map((item) => (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            onClick={() => setProfileOpen(false)}
+                            className="lux-dropdown-item"
                           >
-                            <LogOut size={14} /> Sign Out
-                          </button>
-                        </div>
+                            <span className="lux-dropdown-icon">{item.icon}</span>
+                            {item.label}
+                          </Link>
+                        ))}
+                        <div className="lux-dropdown-divider" />
+                        <button onClick={handleLogout} className="lux-dropdown-item lux-dropdown-logout">
+                          <span className="lux-dropdown-icon"><IconLogout /></span>
+                          Sign Out
+                        </button>
                       </motion.div>
                     )}
                   </AnimatePresence>
                 </>
               ) : (
-                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} transition={SPRING}>
-                  <Link href="/account/login" className="btn-primary py-2 px-5 text-sm">
-                    Sign In
-                  </Link>
-                </motion.div>
+                <Link href="/account/login" className="lux-icon-btn lux-desktop-only" aria-label="Account">
+                  <IconUser />
+                </Link>
               )}
             </div>
 
             {/* Mobile hamburger */}
-            <motion.button
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.93 }}
-              transition={SPRING}
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className="lg:hidden w-9 h-9 flex items-center justify-center rounded-xl text-white/60 hover:text-white hover:bg-white/[0.07] transition-colors ml-1"
+            <button
+              className="lux-icon-btn lux-mobile-only"
+              onClick={() => setMobileOpen(true)}
               aria-label="Menu"
             >
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.span
-                  key={mobileOpen ? 'x' : 'menu'}
-                  initial={{ opacity: 0, rotate: -90 }}
-                  animate={{ opacity: 1, rotate: 0 }}
-                  exit={{ opacity: 0, rotate: 90 }}
-                  transition={{ duration: 0.15 }}
-                >
-                  {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-                </motion.span>
-              </AnimatePresence>
-            </motion.button>
+              <IconMenu />
+            </button>
           </div>
         </div>
-      </motion.nav>
+      </nav>
 
-      {/* ── Search Overlay ─────────────────────────────── */}
+      {/* ── Search Overlay ───────────────────────────────────── */}
       <AnimatePresence>
         {searchOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[100] flex items-start justify-center pt-[22vh] px-4"
-            style={{ background: 'rgba(10,8,7,0.9)', backdropFilter: 'blur(32px)' }}
+            transition={{ duration: 0.25 }}
+            className="lux-search-overlay"
             onClick={(e) => { if (e.target === e.currentTarget) setSearchOpen(false); }}
           >
             <motion.div
-              initial={{ opacity: 0, y: -24, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -24, scale: 0.97 }}
-              transition={EASE_OUT}
-              className="w-full max-w-2xl"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+              className="lux-search-box"
             >
-              {/* Search bar */}
-              <form onSubmit={handleSearch} className="relative">
-                <Search size={20} className="absolute left-5 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none" />
+              <button className="lux-search-close" onClick={() => setSearchOpen(false)}>
+                <IconClose />
+              </button>
+              <p className="lux-eyebrow" style={{ marginBottom: 20 }}>Search</p>
+              <form onSubmit={handleSearch}>
                 <input
                   ref={searchRef}
                   type="text"
                   placeholder="Search faucets, showers, basins…"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-white/[0.06] border border-white/[0.12] rounded-2xl text-white text-lg pl-14 pr-32 py-4.5 outline-none placeholder:text-white/25 focus:border-[#8b5e34]/60 focus:bg-[#8b5e34]/[0.04] transition-all"
-                  style={{ padding: '18px 130px 18px 56px' }}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  className="lux-search-input"
                   autoFocus
                 />
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
-                  <kbd className="hidden sm:flex items-center px-2 py-1 rounded-lg bg-white/[0.06] text-white/25 text-xs border border-white/[0.08]">
-                    ↵ Enter
-                  </kbd>
-                  <motion.button
-                    type="button"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => setSearchOpen(false)}
-                    className="w-8 h-8 flex items-center justify-center rounded-xl bg-white/[0.07] text-white/50 hover:text-white transition-colors"
-                  >
-                    <X size={16} />
-                  </motion.button>
-                </div>
               </form>
-
-              {/* Quick suggestions */}
-              <div className="mt-5">
-                <p className="text-[11px] text-white/25 uppercase tracking-widest mb-3 font-semibold">Popular Searches</p>
-                <div className="flex flex-wrap gap-2">
-                  {['Bathroom Faucets', 'Rain Showers', 'Matte Black', 'LED Mirror', 'Vanity Unit', 'Towel Holder'].map((q, i) => (
-                    <motion.button
-                      key={q}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.04, ...EASE_OUT }}
-                      onClick={() => { router.push(`/products?search=${encodeURIComponent(q)}`); setSearchOpen(false); }}
-                      className="px-4 py-2 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white/50 hover:text-white hover:bg-white/[0.09] hover:border-white/[0.15] text-sm transition-all"
-                    >
-                      {q}
-                    </motion.button>
-                  ))}
-                </div>
-              </div>
+              <p className="lux-search-hint">Press Enter to search</p>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* ── Mobile Drawer ──────────────────────────────── */}
+      {/* ── Mobile Menu ──────────────────────────────────────── */}
       <AnimatePresence>
         {mobileOpen && (
           <>
@@ -517,139 +446,57 @@ export default function Navbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-40 lg:hidden"
-              style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }}
+              className="lux-mobile-backdrop"
               onClick={() => setMobileOpen(false)}
             />
-
             {/* Drawer */}
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ ...SPRING, damping: 35 }}
-              className="fixed top-0 right-0 bottom-0 z-50 w-80 lg:hidden overflow-y-auto"
-              style={{ background: 'rgba(12,10,9,0.98)', backdropFilter: 'blur(40px)', borderLeft: '1px solid rgba(255,255,255,0.07)' }}
+              transition={{ type: 'spring' as const, stiffness: 300, damping: 35 }}
+              className="lux-mobile-menu"
             >
-              {/* Drawer Header */}
-              <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-white/[0.07]">
-                <Link href="/" onClick={() => setMobileOpen(false)} className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-[8px] bg-gradient-to-br from-[#a06832] to-[#5c3a21] flex items-center justify-center text-white font-black text-xs">
-                    BC
-                  </div>
-                  <span className="text-white font-bold tracking-tight">BathCrest</span>
-                </Link>
-                <motion.button
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => setMobileOpen(false)}
-                  className="w-8 h-8 flex items-center justify-center rounded-xl text-white/40 hover:text-white hover:bg-white/[0.07] transition-colors"
-                >
-                  <X size={18} />
-                </motion.button>
+              <div className="lux-mobile-header">
+                <span className="lux-logo-text">BATH<span className="lux-gold">CREST</span></span>
+                <button onClick={() => setMobileOpen(false)} className="lux-icon-btn"><IconClose /></button>
               </div>
-
-              <div className="px-4 py-4">
-                {/* Nav links */}
-                <div className="space-y-0.5 mb-6">
-                  {navLinks.map((link, i) => (
-                    <motion.div
-                      key={link.href}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.05, ...EASE_OUT }}
-                    >
-                      <Link
-                        href={link.href}
-                        onClick={() => setMobileOpen(false)}
-                        className={`flex items-center justify-between px-4 py-3 rounded-xl text-base font-medium transition-all ${
-                          pathname === link.href
-                            ? 'text-white bg-white/[0.08]'
-                            : 'text-white/60 hover:text-white hover:bg-white/[0.05]'
-                        }`}
-                      >
-                        {link.label}
-                        {pathname === link.href && (
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#8b5e34]" />
-                        )}
-                      </Link>
-                    </motion.div>
-                  ))}
-                </div>
-
-                <div className="h-px bg-white/[0.07] mb-6" />
-
-                {/* Category grid */}
-                <p className="text-[10px] text-white/25 uppercase tracking-widest font-semibold mb-3 px-1">Categories</p>
-                <div className="grid grid-cols-2 gap-1.5 mb-6">
-                  {CATEGORIES_NAV.flat().slice(0, 8).map((cat, i) => (
-                    <motion.div
-                      key={cat}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.03, ...EASE_OUT }}
-                    >
-                      <Link
-                        href={`/products?category=${encodeURIComponent(cat)}`}
-                        onClick={() => setMobileOpen(false)}
-                        className="block px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.07] text-white/50 hover:text-white hover:bg-white/[0.08] text-[13px] transition-all"
-                      >
-                        {cat}
-                      </Link>
-                    </motion.div>
-                  ))}
-                </div>
-
-                <div className="h-px bg-white/[0.07] mb-6" />
-
-                {/* Account */}
+              <div className="lux-mobile-body">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={`lux-mobile-link${pathname === link.href ? ' lux-mobile-link-active' : ''}`}
+                  >
+                    {link.label.toUpperCase()}
+                  </Link>
+                ))}
                 {user ? (
-                  <div>
-                    <div className="flex items-center gap-3 px-4 py-3 mb-3">
-                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#a06832] to-[#5c3a21] flex items-center justify-center text-white text-sm font-bold">
-                        {user.name[0].toUpperCase()}
-                      </div>
-                      <div>
-                        <div className="text-white text-sm font-semibold">{user.name}</div>
-                        <div className="text-white/35 text-xs">{user.email}</div>
-                      </div>
-                    </div>
-                    <div className="space-y-0.5">
-                      {profileItems.map((item) => (
-                        <Link
-                          key={item.href}
-                          href={item.href}
-                          onClick={() => setMobileOpen(false)}
-                          className="flex items-center gap-3 px-4 py-2.5 text-white/60 hover:text-white hover:bg-white/[0.05] rounded-xl text-sm transition-all"
-                        >
-                          <span className="text-white/30">{item.icon}</span>
-                          {item.label}
-                        </Link>
-                      ))}
-                      <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center gap-3 px-4 py-2.5 text-red-400/70 hover:text-red-400 hover:bg-red-500/[0.07] rounded-xl text-sm transition-all"
+                  <>
+                    <div className="lux-dropdown-divider" style={{ margin: '16px 0' }} />
+                    {profileItems.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => setMobileOpen(false)}
+                        className="lux-mobile-link"
+                        style={{ fontSize: 12, color: 'rgba(250,248,245,0.5)' }}
                       >
-                        <LogOut size={15} /> Sign Out
-                      </button>
-                    </div>
-                  </div>
+                        {item.label.toUpperCase()}
+                      </Link>
+                    ))}
+                    <button onClick={handleLogout} className="lux-mobile-link" style={{ fontSize: 12, color: '#C8A24C', textAlign: 'left', width: '100%' }}>
+                      SIGN OUT
+                    </button>
+                  </>
                 ) : (
-                  <div className="space-y-2.5 px-1">
-                    <Link
-                      href="/account/login"
-                      onClick={() => setMobileOpen(false)}
-                      className="btn-primary w-full text-center"
-                    >
-                      Sign In
+                  <>
+                    <div className="lux-dropdown-divider" style={{ margin: '16px 0' }} />
+                    <Link href="/account/login" onClick={() => setMobileOpen(false)} className="lux-mobile-link">
+                      LOGIN / REGISTER
                     </Link>
-                    <Link
-                      href="/account/signup"
-                      onClick={() => setMobileOpen(false)}
-                      className="btn-secondary w-full text-center"
-                    >
-                      Create Account
-                    </Link>
-                  </div>
+                  </>
                 )}
               </div>
             </motion.div>
